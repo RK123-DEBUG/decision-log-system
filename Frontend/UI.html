@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decision Log System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="login-page">
+        <div class="contact-section">
+            <p>📧 support@decisionlog.com</p>
+            <p>📞 +91 9876543210</p>
+        </div>
+        <div class="login-box">
+            <h2 style="text-align: center; color: var(--text-main); margin-bottom: 20px;">Welcome</h2>
+            <div class="form-group">
+                <label for="username">User Name</label>
+                <input type="text" id="username" placeholder="Enter your name..." required>
+                <div id="login-error" class="error-text" style="display: none;">Name is required</div>
+            </div>
+            <button id="login-btn" class="submit-btn" style="margin-top: 10px;">Login</button>
+            <p style="text-align: center; margin-top: 20px; font-size: 0.9rem;">
+                Don't have an account? <a href="#" id="to-signup-link" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">Sign Up</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Signup Page -->
+    <div id="signup-page" style="display: none;">
+        <button id="signup-back-btn" class="nav-btn text-btn signup-back-btn">&#8592; Back</button>
+        <div class="contact-section">
+            <p>📧 support@decisionlog.com</p>
+            <p>📞 +91 9876543210</p>
+        </div>
+        <div class="login-box">
+            <h2 style="text-align: center; color: var(--text-main); margin-bottom: 20px;">Sign Up</h2>
+            <div class="form-group">
+                <label for="signup-name">Name</label>
+                <input type="text" id="signup-name" placeholder="Enter alphabets only..." required>
+                <div id="signup-name-error" class="error-text" style="display: none;">Name is required</div>
+            </div>
+            <div class="form-group">
+                <label for="signup-contact">Contact Number</label>
+                <input type="text" id="signup-contact" placeholder="Enter digits only..." required>
+                <div id="signup-contact-error" class="error-text" style="display: none;">Contact number is required</div>
+            </div>
+            <button id="signup-btn" class="submit-btn" style="margin-top: 10px;">Sign Up</button>
+            <p style="text-align: center; margin-top: 20px; font-size: 0.9rem;">
+                Already have an account? <a href="#" id="to-login-link" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">Login</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Main App UI -->
+    <div id="main-app" style="display: none;">
+        <div class="main-nav-bar">
+            <button id="main-back-btn" class="nav-btn text-btn">&#8592; Back</button>
+            <button id="logout-btn" class="nav-btn outline-btn">Logout</button>
+        </div>
+        <header class="header">
+            <div class="marquee-container">
+                <h1 id="welcome-text" class="marquee-text">Welcome to Decision Log System</h1>
+            </div>
+        </header>
+
+        <main class="container">
+        <section class="form-section">
+            <h2>Log a New Decision</h2>
+            <form id="decision-form">
+                <div class="form-group">
+                    <label for="problem">Problem</label>
+                    <input type="text" id="problem" name="problem" placeholder="Describe the problem..." required>
+                    <div id="problem-error" class="error-text" style="display: none;">Only alphabets are allowed in Problem field</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="alternatives">Alternatives</label>
+                    <textarea id="alternatives" name="alternatives" rows="3" placeholder="List the alternatives examined..." required></textarea>
+                    <div id="alternatives-error" class="error-text" style="display: none;">Only alphabets and commas are allowed in Alternatives field</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="final-decision">Final Decision</label>
+                    <textarea id="final-decision" name="final-decision" rows="3" placeholder="State the final decision made..." required></textarea>
+                    <div id="final-decision-error" class="error-text" style="display: none;">Only alphabets are allowed in Final Decision field</div>
+                </div>
+                
+                <div id="form-general-error" class="error-text" style="display: none; text-align: center; margin-bottom: 15px;">All fields are required</div>
+                <button type="submit" class="submit-btn" id="submit-decision-btn">Submit Decision</button>
+            </form>
+        </section>
+
+        <section class="decision-list-section">
+            <h2>Logged Decisions</h2>
+            <div id="decision-list" class="decision-list">
+                <!-- Decision cards will be dynamically injected here -->
+            </div>
+        </section>
+    </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
