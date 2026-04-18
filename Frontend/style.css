@@ -24,7 +24,7 @@
 body {
     font-family: 'Inter', sans-serif;
     background-color: #f8fafc;
-    background-image: url("../images/image 3-1315236107-1024x1024.jpg");
+    background-image: url("../images/image1.jpg");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -35,7 +35,7 @@ body {
 }
 
 body.main-ui-bg {
-    background-image: url("../images/image 5-1750092002-1024x1024.jpg");
+    background-image: url("../images/image2.jpg");
 }
 
 /* Header & Marquee Animation */
