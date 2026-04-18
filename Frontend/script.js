@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Handle Login
-    const handleLogin = () => {
+    const handleLogin = async () => {
         const userNameRaw = usernameInput.value;
         const userName = userNameRaw.trim();
         
@@ -92,18 +92,42 @@ document.addEventListener('DOMContentLoaded', () => {
             loginError.textContent = "Only alphabets are allowed";
             loginError.style.display = 'block';
         } else {
-            loginError.style.display = 'none';
-            // Store user name temporarily
-            localStorage.setItem('decisionLogUserName', userName);
-            
-            // Show main UI
-            loginPage.style.display = 'none';
-            signupPage.style.display = 'none';
-            mainApp.style.display = 'block';
-            document.body.classList.add('main-ui-bg');
-            
-            // Personalize Header
-            welcomeText.textContent = `Welcome, ${userName}`;
+            try {
+                const response = await fetch('http://localhost:3000/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: userName })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    loginError.textContent = data.error || "Login failed";
+                    loginError.style.display = 'block';
+                    return;
+                }
+
+                loginError.style.display = 'none';
+                
+                // Store user name temporarily
+                localStorage.setItem('decisionLogUserName', userName);
+                
+                // Show main UI
+                loginPage.style.display = 'none';
+                signupPage.style.display = 'none';
+                mainApp.style.display = 'block';
+                document.body.classList.add('main-ui-bg');
+                
+                // Personalize Header
+                welcomeText.textContent = `Welcome, ${userName}`;
+
+                // Load decisions from backend
+                loadDecisions(userName);
+            } catch (err) {
+                console.error(err);
+                loginError.textContent = "Server error. Please make sure backend is running.";
+                loginError.style.display = 'block';
+            }
         }
     };
 
@@ -122,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle Signup
     if (signupBtn) {
-        signupBtn.addEventListener('click', () => {
+        signupBtn.addEventListener('click', async () => {
             let valid = true;
             const nameValBase = signupNameInput.value;
             const nameVal = nameValBase.trim();
@@ -155,18 +179,51 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (valid) {
-                alert('Signup Successful');
-                // Switch to login page
-                signupNameInput.value = '';
-                signupContactInput.value = '';
-                signupPage.style.display = 'none';
-                loginPage.style.display = 'flex';
+                try {
+                    const response = await fetch('http://localhost:3000/api/signup', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name: nameVal, contact: contactVal })
+                    });
+                    
+                    const data = await response.json();
+                    if (!response.ok) {
+                        signupNameError.textContent = data.error || "Signup failed";
+                        signupNameError.style.display = 'block';
+                        return;
+                    }
+                    
+                    alert('Signup Successful');
+                    // Switch to login page
+                    signupNameInput.value = '';
+                    signupContactInput.value = '';
+                    signupPage.style.display = 'none';
+                    loginPage.style.display = 'flex';
+                } catch (err) {
+                    console.error(err);
+                    signupNameError.textContent = "Server error. Please make sure backend is running.";
+                    signupNameError.style.display = 'block';
+                }
             }
         });
     }
 
-    // Default temporary store for decisions
-    const decisions = [];
+    const loadDecisions = async (username) => {
+        try {
+            const response = await fetch(`http://localhost:3000/api/decisions/${username}`);
+            if (response.ok) {
+                const data = await response.json();
+                decisionListContainer.innerHTML = '';
+                
+                data.forEach(decision => {
+                    const cardElement = createDecisionCard(decision);
+                    decisionListContainer.appendChild(cardElement);
+                });
+            }
+        } catch (err) {
+            console.error('Failed to fetch decisions', err);
+        }
+    };
 
     // Helper function to create HTML structure for a single decision card
     const createDecisionCard = (decision) => {
@@ -202,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return div.innerHTML;
     };
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         let valid = true;
@@ -255,25 +312,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (valid) {
-            // Add to data store
-            const newDecision = {
-                id: decisions.length + 1,
-                problem: problemVal,
-                alternatives: alternativesVal,
-                finalDecision: finalDecisionVal,
-                timestamp: new Date().toISOString()
-            };
-            
-            decisions.push(newDecision);
+            const userName = localStorage.getItem('decisionLogUserName');
+            if (!userName) return;
 
-            // Render new card
-            const cardElement = createDecisionCard(newDecision);
-            
-            // Prepend so latest appears at the top
-            decisionListContainer.prepend(cardElement);
+            try {
+                // Add to data store via API
+                const response = await fetch('http://localhost:3000/api/decisions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: userName,
+                        problem: problemVal,
+                        alternatives: alternativesVal,
+                        finalDecision: finalDecisionVal
+                    })
+                });
 
-            // Clear the form
-            form.reset();
+                if (response.ok) {
+                    const savedDecision = await response.json();
+                    
+                    // Render new card
+                    const cardElement = createDecisionCard(savedDecision);
+                    
+                    // Prepend so latest appears at the top
+                    decisionListContainer.prepend(cardElement);
+
+                    // Clear the form
+                    form.reset();
+                    formGeneralError.style.display = 'none';
+                } else {
+                    const data = await response.json();
+                    formGeneralError.textContent = data.error || "Failed to save decision";
+                    formGeneralError.style.display = 'block';
+                }
+            } catch (err) {
+                console.error(err);
+                formGeneralError.textContent = "Server error. Please try again.";
+                formGeneralError.style.display = 'block';
+            }
         }
     });
 });

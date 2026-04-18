@@ -1,0 +1,15 @@
+{
+  "name": "decision-log-backend",
+  "version": "1.0.0",
+  "description": "Backend for Decision Log System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^4.19.2",
+    "mongoose": "^9.4.1"
+  }
+}
