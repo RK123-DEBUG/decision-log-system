@@ -13,9 +13,31 @@ app.use(express.json());
 // MongoDB Connection URI - Fetching from .env file
 const mongoURI = process.env.MONGO_URI;
 
-mongoose.connect(mongoURI)
-    .then(() => console.log('Connected to MongoDB successfully.'))
-    .catch((err) => console.error('Error connecting to MongoDB:', err));
+if (!mongoURI) {
+    console.error('CRITICAL ERROR: MONGO_URI is not defined in .env file.');
+    process.exit(1);
+}
+
+// Function to connect to the database and start the server
+const startServer = async () => {
+    try {
+        console.log('Attempting to connect to MongoDB...');
+        await mongoose.connect(mongoURI);
+        console.log('Connected to MongoDB successfully.');
+
+        app.listen(PORT, () => {
+            console.log(`Server is running on http://localhost:${PORT}`);
+        });
+    } catch (err) {
+        console.error('FATAL ERROR: Could not connect to MongoDB.');
+        console.error('Details:', err.message);
+        console.log('\nTroubleshooting Tips:');
+        console.log('1. Ensure MongoDB is installed and running (run "mongod").');
+        console.log('2. Check if your connection string in .env is correct.');
+        console.log('3. If using MongoDB Atlas, ensure your IP is whitelisted.');
+        process.exit(1);
+    }
+};
 
 // Define Mongoose Schemas and Models
 const userSchema = new mongoose.Schema({
@@ -130,6 +152,5 @@ app.post('/api/decisions', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+// Initialize the startup sequence
+startServer();

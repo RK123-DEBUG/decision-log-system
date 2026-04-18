@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const signupContactInput = document.getElementById('signup-contact');
     const signupNameError = document.getElementById('signup-name-error');
     const signupContactError = document.getElementById('signup-contact-error');
+    const signupCountryCode = document.getElementById('country-code');
 
     // App Elements
     const form = document.getElementById('decision-form');
@@ -58,6 +59,14 @@ document.addEventListener('DOMContentLoaded', () => {
             signupContactInput.value = '';
             signupNameError.style.display = 'none';
             signupContactError.style.display = 'none';
+            signupCountryCode.value = '91'; // Reset to India
+        });
+    }
+
+    // Force numeric only for contact
+    if (signupContactInput) {
+        signupContactInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
         });
     }
 
@@ -166,16 +175,31 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Contact Validation
+            const countryCode = signupCountryCode.value;
+            const fullContact = `+${countryCode}${contactVal}`;
+
             if (!contactVal) {
                 signupContactError.textContent = "Contact number is required";
-                signupContactError.style.display = 'block';
+                signupContactError.style.display = 'flex';
                 valid = false;
-            } else if (!/^[0-9]+$/.test(contactVal)) {
-                signupContactError.textContent = "Only numbers are allowed";
-                signupContactError.style.display = 'block';
-                valid = false;
+            } else if (countryCode === '91') {
+                // India Specific
+                if (contactVal.length !== 10) {
+                    signupContactError.textContent = "Contact number must be exactly 10 digits";
+                    signupContactError.style.display = 'flex';
+                    valid = false;
+                } else {
+                    signupContactError.style.display = 'none';
+                }
             } else {
-                signupContactError.style.display = 'none';
+                // International (8-15 digits)
+                if (contactVal.length < 8 || contactVal.length > 15) {
+                    signupContactError.textContent = "Enter a valid phone number (8-15 digits)";
+                    signupContactError.style.display = 'flex';
+                    valid = false;
+                } else {
+                    signupContactError.style.display = 'none';
+                }
             }
 
             if (valid) {
@@ -183,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const response = await fetch('http://localhost:3000/api/signup', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ name: nameVal, contact: contactVal })
+                        body: JSON.stringify({ name: nameVal, contact: fullContact })
                     });
                     
                     const data = await response.json();

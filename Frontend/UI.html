@@ -43,7 +43,15 @@
             </div>
             <div class="form-group">
                 <label for="signup-contact">Contact Number</label>
-                <input type="text" id="signup-contact" placeholder="Enter digits only..." required>
+                <div class="phone-input-group">
+                    <select id="country-code" class="country-select">
+                        <option value="91" selected>🇮🇳 +91</option>
+                        <option value="1">🇺🇸 +1</option>
+                        <option value="44">🇬🇧 +44</option>
+                        <option value="61">🇦🇺 +61</option>
+                    </select>
+                    <input type="text" id="signup-contact" placeholder="Enter number..." required>
+                </div>
                 <div id="signup-contact-error" class="error-text" style="display: none;">Contact number is required</div>
             </div>
             <button id="signup-btn" class="submit-btn" style="margin-top: 10px;">Sign Up</button>

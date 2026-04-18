@@ -137,6 +137,58 @@ textarea {
     resize: vertical;
 }
 
+/* Unified Phone Input Group */
+.phone-input-group {
+    display: flex;
+    align-items: stretch;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background-color: #fafafa;
+    transition: all 0.3s ease;
+}
+
+.phone-input-group:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    background-color: #ffffff;
+}
+
+.country-select {
+    border: none;
+    background: transparent;
+    padding: 0 10px 0 16px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--text-main);
+    cursor: pointer;
+    border-right: 1px solid var(--border-color);
+    outline: none;
+    min-width: 90px;
+}
+
+.phone-input-group input[type="text"] {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    flex: 1;
+}
+
+.error-text {
+    color: #e53e3e;
+    font-size: 0.85rem;
+    margin-top: 6px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.error-text::before {
+    content: '⚠️';
+    font-size: 0.8rem;
+}
+
 .submit-btn {
     background: var(--primary-gradient);
     color: white;
