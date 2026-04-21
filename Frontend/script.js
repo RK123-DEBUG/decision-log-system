@@ -2,7 +2,7 @@
 // Replace 'https://your-backend-name.onrender.com' with your actual Render deployment URL
 const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:3000'
-    : 'https://your-backend-name.onrender.com'; // <--- CHANGE THIS LATER!
+    : 'https://decision-log-system.onrender.com'; // <--- Live Render API URL
 
 document.addEventListener('DOMContentLoaded', () => {
     // Login Elements
