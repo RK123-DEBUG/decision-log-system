@@ -1,3 +1,9 @@
+// Configure your API URL here
+// Replace 'https://your-backend-name.onrender.com' with your actual Render deployment URL
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:3000'
+    : 'https://your-backend-name.onrender.com'; // <--- CHANGE THIS LATER!
+
 document.addEventListener('DOMContentLoaded', () => {
     // Login Elements
     const loginPage = document.getElementById('login-page');
@@ -102,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
             loginError.style.display = 'block';
         } else {
             try {
-                const response = await fetch('http://localhost:3000/api/login', {
+                const response = await fetch(`${API_BASE_URL}/api/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username: userName })
@@ -204,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (valid) {
                 try {
-                    const response = await fetch('http://localhost:3000/api/signup', {
+                    const response = await fetch(`${API_BASE_URL}/api/signup`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ name: nameVal, contact: fullContact })
@@ -234,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const loadDecisions = async (username) => {
         try {
-            const response = await fetch(`http://localhost:3000/api/decisions/${username}`);
+            const response = await fetch(`${API_BASE_URL}/api/decisions/${username}`);
             if (response.ok) {
                 const data = await response.json();
                 decisionListContainer.innerHTML = '';
@@ -341,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 // Add to data store via API
-                const response = await fetch('http://localhost:3000/api/decisions', {
+                const response = await fetch(`${API_BASE_URL}/api/decisions`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

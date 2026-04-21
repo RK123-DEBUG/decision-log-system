@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+
 // MongoDB Connection URI - Fetching from .env file
 const mongoURI = process.env.MONGO_URI;
 
