@@ -10,6 +10,11 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+// Root route to check if the API is running and prevent "Cannot GET /" error
+app.get('/', (req, res) => {
+    res.send('Decision Log System API is running successfully on Render!');
+});
+
 
 // MongoDB Connection URI - Fetching from .env file
 const mongoURI = process.env.MONGO_URI;
