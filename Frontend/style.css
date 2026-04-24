@@ -383,3 +383,255 @@ textarea {
     top: 20px;
     left: 20px;
 }
+
+/* ── View Toggle ─────────────────────────────────────────────────────────── */
+.view-toggle {
+    display: flex;
+    gap: 6px;
+    background: var(--bg-color);
+    border-radius: var(--radius-md);
+    padding: 4px;
+    border: 1px solid var(--border-color);
+}
+
+.toggle-btn {
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 7px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text-muted);
+    transition: all 0.25s ease;
+}
+
+.toggle-btn.active {
+    background: var(--primary-gradient);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.35);
+}
+
+.toggle-btn:not(.active):hover {
+    background: #e9edf7;
+    color: var(--text-main);
+}
+
+/* ── Card Header (author + timestamp) ────────────────────────────────────── */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.card-header h3 {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin: 0;
+}
+
+.card-meta {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+/* ── Collapsible Sections ─────────────────────────────────────────────────── */
+.section-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 10px 0 6px;
+    border-top: 1px solid var(--border-color);
+    margin-top: 14px;
+    user-select: none;
+    transition: color 0.2s ease;
+}
+
+.section-toggle:hover {
+    color: var(--primary-color);
+}
+
+.toggle-icon {
+    margin-left: auto;
+    font-size: 0.75rem;
+    transition: transform 0.2s ease;
+}
+
+.collapsible {
+    display: none;
+    padding-top: 10px;
+    animation: fadeIn 0.3s ease;
+}
+
+.collapsible.open {
+    display: block;
+}
+
+/* ── Comments ─────────────────────────────────────────────────────────────── */
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+    max-height: 260px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.comment-item {
+    background: #f7f9fc;
+    border-radius: var(--radius-md);
+    padding: 10px 14px;
+    border-left: 3px solid var(--primary-color);
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.comment-user {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.comment-time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.comment-body {
+    font-size: 0.9rem;
+    color: var(--text-main);
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+/* ── Revisions ────────────────────────────────────────────────────────────── */
+.revisions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.revision-item {
+    background: #fffbf0;
+    border-left: 3px solid #f6ad55;
+    border-radius: var(--radius-md);
+    padding: 10px 14px;
+}
+
+.revision-user {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #c05621;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.revision-item p {
+    font-size: 0.9rem;
+    color: var(--text-main);
+    margin: 0 0 4px;
+    white-space: pre-wrap;
+}
+
+.revision-time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* ── Shared: Add Comment / Revision Form ─────────────────────────────────── */
+.add-comment,
+.add-revision {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.add-comment textarea,
+.add-revision textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-family: inherit;
+    resize: vertical;
+    background: #fafafa;
+    transition: all 0.3s ease;
+}
+
+.add-comment textarea:focus,
+.add-revision textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    background: #fff;
+}
+
+.action-btn {
+    align-self: flex-end;
+    padding: 8px 20px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.comment-btn {
+    background: var(--primary-gradient);
+    color: #fff;
+}
+
+.revision-btn {
+    background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
+    color: #fff;
+}
+
+.action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.action-error {
+    font-size: 0.82rem;
+    color: #e53e3e;
+    font-weight: 500;
+}
+
+/* ── Utility Text ────────────────────────────────────────────────────────── */
+.no-data {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin: 0;
+}
+
+.loading-text,
+.empty-text {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 20px 0;
+}
+

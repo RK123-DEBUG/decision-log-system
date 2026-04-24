@@ -65,6 +65,13 @@
     <div id="main-app" style="display: none;">
         <div class="main-nav-bar">
             <button id="main-back-btn" class="nav-btn text-btn">&#8592; Back</button>
+
+            <!-- View Toggle -->
+            <div class="view-toggle" id="view-toggle">
+                <button id="my-decisions-btn" class="toggle-btn active" data-view="my">My Decisions</button>
+                <button id="all-decisions-btn" class="toggle-btn" data-view="all">All Team Decisions</button>
+            </div>
+
             <button id="logout-btn" class="nav-btn outline-btn">Logout</button>
         </div>
         <header class="header">
@@ -74,39 +81,39 @@
         </header>
 
         <main class="container">
-        <section class="form-section">
-            <h2>Log a New Decision</h2>
-            <form id="decision-form">
-                <div class="form-group">
-                    <label for="problem">Problem</label>
-                    <input type="text" id="problem" name="problem" placeholder="Describe the problem..." required>
-                    <div id="problem-error" class="error-text" style="display: none;">Only alphabets are allowed in Problem field</div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="alternatives">Alternatives</label>
-                    <textarea id="alternatives" name="alternatives" rows="3" placeholder="List the alternatives examined..." required></textarea>
-                    <div id="alternatives-error" class="error-text" style="display: none;">Only alphabets and commas are allowed in Alternatives field</div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="final-decision">Final Decision</label>
-                    <textarea id="final-decision" name="final-decision" rows="3" placeholder="State the final decision made..." required></textarea>
-                    <div id="final-decision-error" class="error-text" style="display: none;">Only alphabets are allowed in Final Decision field</div>
-                </div>
-                
-                <div id="form-general-error" class="error-text" style="display: none; text-align: center; margin-bottom: 15px;">All fields are required</div>
-                <button type="submit" class="submit-btn" id="submit-decision-btn">Submit Decision</button>
-            </form>
-        </section>
+            <section class="form-section">
+                <h2>Log a New Decision</h2>
+                <form id="decision-form">
+                    <div class="form-group">
+                        <label for="problem">Problem</label>
+                        <input type="text" id="problem" name="problem" placeholder="Describe the problem..." required>
+                        <div id="problem-error" class="error-text" style="display: none;">Only alphabets are allowed in Problem field</div>
+                    </div>
 
-        <section class="decision-list-section">
-            <h2>Logged Decisions</h2>
-            <div id="decision-list" class="decision-list">
-                <!-- Decision cards will be dynamically injected here -->
-            </div>
-        </section>
-    </main>
+                    <div class="form-group">
+                        <label for="alternatives">Alternatives</label>
+                        <textarea id="alternatives" name="alternatives" rows="3" placeholder="List the alternatives examined..." required></textarea>
+                        <div id="alternatives-error" class="error-text" style="display: none;">Only alphabets and commas are allowed in Alternatives field</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="final-decision">Final Decision</label>
+                        <textarea id="final-decision" name="final-decision" rows="3" placeholder="State the final decision made..." required></textarea>
+                        <div id="final-decision-error" class="error-text" style="display: none;">Only alphabets are allowed in Final Decision field</div>
+                    </div>
+
+                    <div id="form-general-error" class="error-text" style="display: none; text-align: center; margin-bottom: 15px;">All fields are required</div>
+                    <button type="submit" class="submit-btn" id="submit-decision-btn">Submit Decision</button>
+                </form>
+            </section>
+
+            <section class="decision-list-section">
+                <h2 id="decision-list-title">Logged Decisions</h2>
+                <div id="decision-list" class="decision-list">
+                    <!-- Decision cards will be dynamically injected here -->
+                </div>
+            </section>
+        </main>
     </div>
 
     <script src="script.js"></script>

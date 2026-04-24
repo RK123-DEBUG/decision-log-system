@@ -45,22 +45,48 @@ const startServer = async () => {
     }
 };
 
-// Define Mongoose Schemas and Models
+// ─── Mongoose Schemas & Models ────────────────────────────────────────────────
+
 const userSchema = new mongoose.Schema({
-    name: { type: String, unique: true, required: true },
+    name:    { type: String, unique: true, required: true },
     contact: { type: String, required: true }
 });
 
-const decisionSchema = new mongoose.Schema({
-    username: { type: String, required: true },
-    problem: { type: String, required: true },
-    alternatives: { type: String, required: true },
-    finalDecision: { type: String, required: true },
-    timestamp: { type: String, default: () => new Date().toISOString() }
+const revisionSchema = new mongoose.Schema({
+    revisedBy:  { type: String, required: true },
+    suggestion: { type: String, required: true },
+    timestamp:  { type: String, default: () => new Date().toISOString() }
 });
 
-const User = mongoose.model('User', userSchema);
+const decisionSchema = new mongoose.Schema({
+    username:      { type: String, required: true },
+    problem:       { type: String, required: true },
+    alternatives:  { type: String, required: true },
+    finalDecision: { type: String, required: true },
+    timestamp:     { type: String, default: () => new Date().toISOString() },
+    revisions:     [revisionSchema]   // array of revision suggestions
+});
+
+const commentSchema = new mongoose.Schema({
+    decisionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Decision', required: true },
+    username:   { type: String, required: true },
+    comment:    { type: String, required: true },
+    timestamp:  { type: String, default: () => new Date().toISOString() }
+});
+
+const User     = mongoose.model('User',     userSchema);
 const Decision = mongoose.model('Decision', decisionSchema);
+const Comment  = mongoose.model('Comment',  commentSchema);
+
+// ─── Helper ───────────────────────────────────────────────────────────────────
+
+const mapId = (doc) => {
+    const obj = doc.toObject();
+    obj.id = obj._id;
+    return obj;
+};
+
+// ─── Auth Routes ──────────────────────────────────────────────────────────────
 
 // User Signup
 app.post('/api/signup', async (req, res) => {
@@ -68,18 +94,11 @@ app.post('/api/signup', async (req, res) => {
     if (!name || !contact) {
         return res.status(400).json({ error: "Name and contact are required" });
     }
-
     try {
-        const newUser = new User({ name, contact });
-        const savedUser = await newUser.save();
-        
-        // Map _id to id so frontend script.js continues to work
-        res.status(201).json({ 
-            message: "User registered successfully", 
-            id: savedUser._id 
-        });
+        const savedUser = await new User({ name, contact }).save();
+        res.status(201).json({ message: "User registered successfully", id: savedUser._id });
     } catch (err) {
-        if (err.code === 11000) { // MongoDB duplicate key error code
+        if (err.code === 11000) {
             return res.status(400).json({ error: "User already exists" });
         }
         res.status(500).json({ error: err.message });
@@ -89,74 +108,105 @@ app.post('/api/signup', async (req, res) => {
 // User Login
 app.post('/api/login', async (req, res) => {
     const { username } = req.body;
-    if (!username) {
-        return res.status(400).json({ error: "Username is required" });
-    }
-
+    if (!username) return res.status(400).json({ error: "Username is required" });
     try {
         const user = await User.findOne({ name: username });
-        if (!user) {
-            return res.status(404).json({ error: "User not found. Please sign up." });
-        }
-        
-        // Return object with mapped id
-        const userObj = user.toObject();
-        userObj.id = userObj._id;
-        
-        res.status(200).json({ message: "Login successful", user: userObj });
+        if (!user) return res.status(404).json({ error: "User not found. Please sign up." });
+        res.status(200).json({ message: "Login successful", user: mapId(user) });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-// Get Decisions for User
-app.get('/api/decisions/:username', async (req, res) => {
-    const username = req.params.username;
-    
+// ─── Decision Routes ──────────────────────────────────────────────────────────
+
+// GET all decisions (shared team view)
+app.get('/api/decisions', async (req, res) => {
     try {
-        const decisions = await Decision.find({ username }).sort({ _id: -1 });
-        
-        // Map _id to id for the frontend
-        const mappedDecisions = decisions.map(d => {
-            const doc = d.toObject();
-            doc.id = doc._id;
-            return doc;
-        });
-        
-        res.status(200).json(mappedDecisions);
+        const decisions = await Decision.find().sort({ _id: -1 });
+        res.status(200).json(decisions.map(mapId));
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-// Add New Decision
+// GET decisions for a specific user
+app.get('/api/decisions/:username', async (req, res) => {
+    try {
+        const decisions = await Decision.find({ username: req.params.username }).sort({ _id: -1 });
+        res.status(200).json(decisions.map(mapId));
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// POST add a new decision
 app.post('/api/decisions', async (req, res) => {
     const { username, problem, alternatives, finalDecision, timestamp } = req.body;
-    
     if (!username || !problem || !alternatives || !finalDecision) {
         return res.status(400).json({ error: "All fields are required" });
     }
-
     try {
-        const newDecision = new Decision({
-            username,
-            problem,
-            alternatives,
-            finalDecision,
+        const saved = await new Decision({
+            username, problem, alternatives, finalDecision,
             timestamp: timestamp || new Date().toISOString()
-        });
-        
-        const savedDecision = await newDecision.save();
-        
-        // Map _id to id for the frontend
-        const decisionObj = savedDecision.toObject();
-        decisionObj.id = decisionObj._id;
-        
-        res.status(201).json(decisionObj);
+        }).save();
+        res.status(201).json(mapId(saved));
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-// Initialize the startup sequence
+// ─── Comment Routes ───────────────────────────────────────────────────────────
+
+// GET all comments for a decision
+app.get('/api/decisions/:id/comments', async (req, res) => {
+    try {
+        const comments = await Comment.find({ decisionId: req.params.id }).sort({ _id: 1 });
+        res.status(200).json(comments.map(mapId));
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// POST add a comment to a decision
+app.post('/api/decisions/:id/comments', async (req, res) => {
+    const { username, comment } = req.body;
+    if (!username || !comment) {
+        return res.status(400).json({ error: "Username and comment are required" });
+    }
+    try {
+        const saved = await new Comment({
+            decisionId: req.params.id,
+            username,
+            comment
+        }).save();
+        res.status(201).json(mapId(saved));
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ─── Revision Routes ──────────────────────────────────────────────────────────
+
+// POST suggest a revision on a decision
+app.post('/api/decisions/:id/revisions', async (req, res) => {
+    const { revisedBy, suggestion } = req.body;
+    if (!revisedBy || !suggestion) {
+        return res.status(400).json({ error: "revisedBy and suggestion are required" });
+    }
+    try {
+        const decision = await Decision.findById(req.params.id);
+        if (!decision) return res.status(404).json({ error: "Decision not found" });
+
+        decision.revisions.push({ revisedBy, suggestion });
+        await decision.save();
+
+        res.status(201).json({ message: "Revision added", revisions: decision.revisions });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ─── Start ────────────────────────────────────────────────────────────────────
 startServer();
