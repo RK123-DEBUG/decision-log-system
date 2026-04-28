@@ -140,6 +140,10 @@ document.addEventListener('DOMContentLoaded', () => {
             loginError.textContent = "Only alphabets are allowed";
             loginError.style.display = 'block';
         } else {
+            const originalText = loginBtn.textContent;
+            loginBtn.textContent = 'Logging in...';
+            loginBtn.disabled = true;
+
             try {
                 const response = await fetch(`${API_BASE_URL}/api/login`, {
                     method: 'POST',
@@ -175,6 +179,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error(err);
                 loginError.textContent = "Server error. Please make sure backend is running.";
                 loginError.style.display = 'block';
+            } finally {
+                loginBtn.textContent = originalText;
+                loginBtn.disabled = false;
             }
         }
     };
@@ -225,6 +232,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (valid) {
+                const originalText = signupBtn.textContent;
+                signupBtn.textContent = 'Signing up...';
+                signupBtn.disabled = true;
+
                 try {
                     const response = await fetch(`${API_BASE_URL}/api/signup`, {
                         method: 'POST',
@@ -246,6 +257,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.error(err);
                     signupNameError.textContent = "Server error. Please make sure backend is running.";
                     signupNameError.style.display = 'block';
+                } finally {
+                    signupBtn.textContent = originalText;
+                    signupBtn.disabled = false;
                 }
             }
         });
