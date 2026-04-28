@@ -5,7 +5,7 @@ const API_BASE_URL = window.location.hostname === 'localhost' || window.location
     : 'https://decision-log-system.onrender.com'; // <--- Live Render API URL
 
 document.addEventListener('DOMContentLoaded', () => {
-    const API = 'http://localhost:3000/api';
+    const API = `${API_BASE_URL}/api`;
 
     // ── Page Elements ────────────────────────────────────────────────────────
     const loginPage   = document.getElementById('login-page');
